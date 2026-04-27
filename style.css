@@ -44,7 +44,8 @@ p {
 
 a {
   display: inline-block;
-  margin: 8px auto 16px;
+  margin: 8px 0 16px;
+  text-align: center;
   padding: 10px 18px;
   color: #ffffff;
   background: #2563eb;
