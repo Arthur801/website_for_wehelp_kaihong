@@ -9,8 +9,8 @@ body {
   padding: 40px 20px;
   font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
   line-height: 1.8;
-  color: #333;
-  background: #f4f6f8;
+  color: #ffffff;
+  background: #000000;
 }
 
 body > * {
@@ -25,7 +25,7 @@ h1 {
   padding-left: 14px;
   font-size: 24px;
   line-height: 1.4;
-  color: #1f2937;
+  color: #ffffff;
   border-left: 6px solid #3b82f6;
 }
 
@@ -37,17 +37,16 @@ p {
   margin-top: 0;
   margin-bottom: 16px;
   padding: 18px 22px;
-  background: #ffffff;
+  background: #000000;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 a {
   display: inline-block;
-  margin: 8px 0 16px;
-  text-align: center;
+  margin: 8px 480px 16px;
   padding: 10px 18px;
-  color: #ffffff;
+  color: #000000;
   background: #2563eb;
   text-decoration: none;
   border-radius: 8px;
