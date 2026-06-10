@@ -28,6 +28,7 @@ body {
     text-decoration: none;
 }
 
+/* popup menu */
 .header-items-mobile {
     display: none;
     border: none;
@@ -45,6 +46,7 @@ body {
     cursor: pointer;
 }
 
+/* wlecome banner */
 .welcome-banner {
     display: flex;
     background-color: lightblue;
@@ -56,6 +58,7 @@ body {
     font-weight: bold;
 }
 
+/* main content */
 .main-content {
     display: flex;
     flex-direction: column;
@@ -199,7 +202,8 @@ body {
     .block {
         width: 100%;
     }
-
+    
+    /* popup menu*/
     .popup-menu {
         position: fixed;
         top: 0;
