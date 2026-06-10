@@ -1,0 +1,47 @@
+body {
+    font-size: 20px; /* base font size 20px */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-logo {
+    font-weight: bold;
+}
+
+.header-items {
+    display: flex;
+}
+
+.header-item {
+    margin: 10px;
+}
+
+.header-items-mobile {
+    display: none;
+}
+
+.welcome-banner {
+    display: flex;
+    background-color: lightblue;
+    height: 250px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 40px;
+}
+@media (max-width:1200px) {
+
+}
+
+@media (max-width:600px) {
+    .header-items {
+        display: none;
+    }
+
+    .header-items-mobile {
+        display: block;
+    }
+}
