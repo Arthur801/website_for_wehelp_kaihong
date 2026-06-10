@@ -17,11 +17,21 @@
             <div class="header-item"><a>Item 3</a></div>
             <div class="header-item"><a>Item 4</a></div>
         </div>
-        <!--mobile menu-->
+        <!--mobile menu burger button-->
         <div class="header-items-mobile">
-            <img src="./svgviewer-output.svg" alt="mobile menu" width="30px" height="30px">
+            <button class="burgerbtn" id="burgerBtn"><img src="./svgviewer-output.svg" alt="mobile menu" width="30px" height="30px"></button>
         </div>
     </div>
+
+    <!--Popup menu-->
+    <div class="popup-menu" id="popupMenu">
+        <button class="closebtn" id="closeBtn">X</button>
+        <div class="pupmenu-item"><a>Item 1</a></div>
+        <div class="pupmenu-item"><a>Item 2</a></div>
+        <div class="pupmenu-item"><a>Item 3</a></div>
+        <div class="pupmenu-item"><a>Item 4</a></div>
+    </div>
+
     <!--淺藍色的橫幅，Welcome to MyHome-->
     <div class="welcome-banner">Welcome to MyHome</div>
     <!--main-content-->
@@ -106,5 +116,19 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const burgerBtn = document.querySelector("#burgerBtn");
+        const closeBtn = document.querySelector("#closeBtn");
+        const popupMenu = document.querySelector("#popupMenu")
+
+        burgerBtn.addEventListener("click", () => {
+            popupMenu.classList.add("active");
+        });
+
+        closeBtn.addEventListener("click", () => {
+            popupMenu.classList.remove("active");
+        });
+    </script>
 </body>
 </html>
