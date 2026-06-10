@@ -16,6 +16,7 @@ body {
 }
 .header-logo {
     font-weight: bold;
+    padding-left: 10px;
 }
 
 .header-items {
@@ -121,9 +122,35 @@ body {
     align-items: center;
 }
 
-
+/* 1200px >= screen width > 600px */
 @media (max-width:1200px) {
+    .main-content {
+        width: 90%; /* main content cover 90% of screen width*/
+    }
 
+    /* bars for pad , arrange 3 bar3 into 2 rows...*/
+    .bars {
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .bar:first-child {
+        grid-column: 1/1;
+    }
+
+    .bar:nth-child(3) {
+        grid-column: 1/3;
+    }
+
+    /* content blocks for pad*/
+    .content-blocks {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .block:nth-child(9),
+    .block:nth-child(10) {
+        grid-column: span 2;
+    }
 }
 
 @media (max-width:600px) {
