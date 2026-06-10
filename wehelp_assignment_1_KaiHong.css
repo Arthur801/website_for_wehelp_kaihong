@@ -1,5 +1,7 @@
 body {
     font-size: 20px; /* base font size 20px */
+    border: 0px;
+    margin: 0px;
 }
 
 .header {
@@ -32,6 +34,51 @@ body {
     text-align: center;
     font-size: 40px;
 }
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    width: 1200px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* bars */
+.bars {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    margin-bottom: 20px;
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    background-color: lightblue;
+    height: 50px;
+    margin: 10px;
+}
+
+.bar:first-child {
+    grid-column: 1/3;
+}
+
+.bar img {
+    width: 80px;
+    height: 100%;
+    flex: none;
+}
+
+.bar-text {
+    margin-left: 10px;
+}
+
+/* content blocks */
+
+.content-blocks {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+}
+
 @media (max-width:1200px) {
 
 }
