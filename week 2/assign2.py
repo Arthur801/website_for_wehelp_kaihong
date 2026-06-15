@@ -160,3 +160,38 @@ func3(1);
 func3(5);
 func3(10);
 func3(30);
+
+
+# task 4
+def func4(sp, stat, n):
+
+    minSp = float("inf")
+    minSpIdx = -1
+    for i in range(len(sp)):
+        if stat[i] == '0' and sp[i] >= n and sp[i] < minSp:
+            minSp = sp[i]
+            minSpIdx = i
+    if minSpIdx != -1:
+        print(minSpIdx)
+    else:
+        sumSp = 0
+        spSortedList = []
+        maxSp = 0
+        maxSpIdx = -1
+        for i in range(len(sp)):
+            if stat[i] == '0' and sp[i] > 0:
+                sumSp += sp[i]
+                spSortedList.append(sp[i])
+                if sp[i] > maxSp:
+                    maxSpIdx = i
+        if sumSp >= n:
+            spSortedList.sort()
+            print(maxSpIdx)
+        else:
+            print("Not enough space!")
+
+
+print("==========Task 4==========")
+func4([3, 1, 5, 4, 3, 2], "101000", 2)
+func4([1, 0, 5, 1, 3], "10100", 4)
+func4([4, 6, 5, 8], "1000", 4)
