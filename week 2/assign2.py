@@ -34,13 +34,18 @@ func1("特南克斯")
 # task 2
 schedule = None
 def func2(ss, start, end, criteria):
+    # Initialize service schedules
     global schedule
     if schedule == None:
         schedule = [[False] * 24 for s in range(len(ss))]# record the schedule of ss
     
+    # [service, distance, index]
     closest = [None, float("inf"), -1]
 
+    # c criteria
     if criteria[0] == "c":
+
+        # c >= expected
         if criteria[1:3] == ">=":
             c = int(criteria[3:])
             for i in range(len(ss)):
@@ -52,6 +57,8 @@ def func2(ss, start, end, criteria):
                 print(ss[closest[2]]["name"])
             else:
                 print("Sorry")
+        
+        # c <= expected
         elif criteria[1:3] == "<=":
             c = int(criteria[3:])
             for i in range(len(ss)):
@@ -63,6 +70,8 @@ def func2(ss, start, end, criteria):
                 print(ss[closest[2]]["name"])
             else:
                 print("Sorry")
+
+        # c = expected
         elif criteria[1] == "=":
             c = int(criteria[2:])
             for i in range(len(ss)):
@@ -76,7 +85,11 @@ def func2(ss, start, end, criteria):
                 print("Sorry")
         else:
             print("err")
+    
+    # r criteria
     elif criteria[0] == "r":
+
+        # r >= expected
         if criteria[1:3] == ">=":
             r = float(criteria[3:])
             for i in range(len(ss)):
@@ -88,6 +101,8 @@ def func2(ss, start, end, criteria):
                 print(ss[closest[2]]["name"])
             else:
                 print("Sorry")
+        
+        # r <= expected
         elif criteria[1:3] == "<=":
             r = float(criteria[3:])
             for i in range(len(ss)):
@@ -99,6 +114,8 @@ def func2(ss, start, end, criteria):
                 print(ss[closest[2]]["name"])
             else:
                 print("Sorry")
+        
+        # r = expected
         elif criteria[1] == "=":
             r = float(criteria[2:])
             for i in range(len(ss)):
@@ -112,6 +129,8 @@ def func2(ss, start, end, criteria):
                 print("Sorry")
         else:
             print("err")
+
+    # Search by service name
     elif criteria[0:4] == "name":
         for i in range(len(ss)):
             if ss[i]["name"] == criteria[5:] and all(t == False for t in schedule[i][start:end]):
@@ -119,6 +138,8 @@ def func2(ss, start, end, criteria):
                 print(ss[i]["name"])
         else:
             print("Sorry")
+    
+    # Invalid criteria
     else:
         print("err")
     

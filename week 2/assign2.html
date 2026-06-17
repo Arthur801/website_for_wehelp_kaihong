@@ -57,20 +57,21 @@
         // task 2
         let schedule = null;
         function func2(ss, start, end, criteria) {
+            // Check whether a service is free during the given time range
             function isAvailable(t, start, end) {
                 let i;
-                // console.log(schedule);
                 return schedule[t].slice(start, end).every(i => i === false);
             }
 
+            // Find the available service closest to the given value
             function findClosest(ss, key, op, value, start, end) {
                 let clsestIdx = null;
                 let clsestSub = Number.MAX_SAFE_INTEGER;
 
                 for(let i = 0; i < ss.length; i++) {
-                    currentValue = ss[i][key];
-                    // console.log(currentValue);
-
+                    let currentValue = ss[i][key];
+                    
+                    // Filter by comparison operator
                     if(op == ">=" && currentValue < value)
                         continue;
                     else if(op == "<=" && currentValue > value)
@@ -78,10 +79,12 @@
                     else if(op == "=" && currentValue != value)
                         continue;
 
+                    // Skip unavailable service
                     if(!isAvailable(i, start, end))
                         continue;
 
-                    sub = Math.abs(currentValue - value);
+                    // Compare distance from target value
+                    let sub = Math.abs(currentValue - value);
                     if(sub < clsestSub) {
                         clsestSub = sub;
                         clsestIdx = i;
@@ -90,38 +93,45 @@
                 return clsestIdx;
             }
 
-            function parseCriteria(critetia) {
-                if(critetia[0] == 'n') {
+            // Parse criteria string into key, operator, and value
+            function parseCriteria(criteria) {
+                if(criteria[0] == 'n') {
                     return ["name", "=", criteria.slice(5)];
                 }
                 else if(criteria[0] == 'r') {
-                    if (critetia[1] == '=')
-                        return ['r', '=', critetia.slice(2)];
-                    return ['r', critetia.slice(1,3), (critetia.slice(3))];
+                    if (criteria[1] == '=')
+                        return ['r', '=', criteria.slice(2)];
+                    return ['r', criteria.slice(1,3), (criteria.slice(3))];
                 }
-                else if(critetia[0] == 'c') {
-                    if (critetia[1] == '=')
-                        return ['c', '=', critetia.slice(2)];
-                    return ['c', critetia.slice(1,3), critetia.slice(3)];
+                else if(criteria[0] == 'c') {
+                    if (criteria[1] == '=')
+                        return ['c', '=', criteria.slice(2)];
+                    return ['c', criteria.slice(1,3), criteria.slice(3)];
                 }
                 else return null;
             }
-            // func 2
+            // func 2 initialize schedule table
             if(schedule === null) {
                 schedule = [];
                 for (let i = 0; i < ss.length; i++) {
                     schedule.push(Array(24).fill(false));
                 }
             }
-            parseArr = parseCriteria(criteria);
+
+            let parseArr = parseCriteria(criteria);
+
+            // Invalid criteria format
             if(parseArr === null)
-                print("Error!")
+                console.log("Error!")
             else {
+                // Search by service name
                 if (parseArr[0] === "name") {
                     for(let i = 0; i < ss.length; i++) {
                         if (ss[i]["name"] === parseArr[2] && isAvailable(i, start, end)) {
                             console.log(ss[i]["name"]);
-                            for(let j = start; j <= end; j++) {
+
+                            // Mark time range as occupied
+                            for(let j = start; j < end; j++) {
                                 schedule[i][j] = true;
                             }
                             return null;
@@ -131,13 +141,15 @@
                     return null;
                 }
                 else {
+                    // Search by rating or cost
                     let idx = findClosest(ss, parseArr[0], parseArr[1], parseArr[2], start, end);
-                    // console.log(idx);
+
                     if(idx === null) {
                         console.log("Sorry");
                         return null;
                     }
-                    for(let i = start; i <= end; i++) {
+                    // Mark time range as occupied
+                    for(let i = start; i < end; i++) {
                         schedule[idx][i] = true;
                     }
                     
