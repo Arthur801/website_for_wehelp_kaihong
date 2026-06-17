@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // task 1
+        function func1(name) {
+            const chrcoord = new Map([
+                ["悟空", [0, 0]], 
+                ["辛巴", [-3, 3]], 
+                ["特南克斯", [1, -2]], 
+                ["貝吉塔", [-4, -1]], 
+                ["丁滿", [-1, 4]], 
+                ["弗利沙", [4, -1]]
+            ]);
+            let resultMap = new Map();
+            let minDist = Number.MAX_SAFE_INTEGER;
+            let maxDist = 0;
+
+            // pair the characters with distances
+            for(let [key, value] of chrcoord.entries()) {
+                let dist = Math.abs(chrcoord.get(name)[0]-chrcoord.get(key)[0]) + Math.abs(chrcoord.get(name)[1]-chrcoord.get(key)[1]);
+                // determine whether above or below the line through (3, -2), (-1, 3) 5x+4y-7=0
+                if ((5*chrcoord.get(name)[0]+4*chrcoord.get(name)[1]-7>0 && 5*chrcoord.get(key)[0]+4*chrcoord.get(key)[1]-7<0) || (5*chrcoord.get(name)[0]+4*chrcoord.get(name)[1]-7<0 && 5*chrcoord.get(key)[0]+4*chrcoord.get(key)[1]-7>0)) {
+                    dist+=2;
+                }
+                if (!resultMap.has(dist)) {
+                    resultMap.set(dist,[]);
+                }
+                resultMap.get(dist).push(key);
+            }
+
+            // Find max distance and min distance
+            for(let [key, value] of resultMap.entries()) {
+                if(key < minDist && key != 0) {
+                    minDist = key;
+                }
+                if(key > maxDist) {
+                    maxDist = key;
+                }
+            }
+            console.log("最遠%s;最近%s", resultMap.get(maxDist).join("、"), resultMap.get(minDist).join("、"));
+        }
+
+
+
+        console.log("==========Task 1==========");
+        func1("辛巴");
+        func1("悟空");
+        func1("弗利沙");
+        func1("特南克斯");
+
+        // task 2
+        let schedule = null;
+        function func2() {
+
+        }
+
+        // task 3
+        function func3(index) {
+            // The rule of number sequence : (-2, -3, +1, +2)*n
+            let num = 25;
+
+            switch(index%4) {
+                case 0:
+                    console.log(num - 2*(Math.trunc(index/4)));
+                    break;
+                case 1:
+                    console.log(num - 2*(Math.trunc(index/4)) - 2);
+                    break;
+                case 2:
+                    console.log(num - 2*(Math.trunc(index/4)) - 5);
+                    break;
+                case 3:
+                    console.log(num - 2*(Math.trunc(index/4)) - 4);
+                    break;
+                default:
+                    console.log("Error!")
+            }
+        }
+        console.log("==========Task 3==========")
+        func3(1);
+        func3(5);
+        func3(10);
+        func3(30);
+    </script>
+</body>
+</html>

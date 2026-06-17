@@ -45,7 +45,7 @@ def func2(ss, start, end, criteria):
             c = int(criteria[3:])
             for i in range(len(ss)):
                 closest_dist = abs(ss[i]["c"]-c)
-                if ss[i]["c"] >= c and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end+1]):
+                if ss[i]["c"] >= c and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end]):
                     closest = [ss[i], closest_dist, i]
             if closest[0] != None:
                 schedule[closest[2]][start:end] = [True]*(end-start)
@@ -56,7 +56,7 @@ def func2(ss, start, end, criteria):
             c = int(criteria[3:])
             for i in range(len(ss)):
                 closest_dist = abs(ss[i]["c"]-c)
-                if ss[i]["c"] <= c and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end+1]):
+                if ss[i]["c"] <= c and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end]):
                     closest = [ss[i], closest_dist, i]
             if closest[0] != None:
                 schedule[closest[2]][start:end] = [True]*(end-start)
@@ -67,7 +67,7 @@ def func2(ss, start, end, criteria):
             c = int(criteria[2:])
             for i in range(len(ss)):
                 closest_dist = abs(ss[i]["c"]-c)
-                if ss[i]["c"] == c and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end+1]):
+                if ss[i]["c"] == c and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end]):
                     closest = [ss[i], closest_dist, i]
             if closest[0] != None:
                 schedule[closest[2]][start:end] = [True]*(end-start)
@@ -81,7 +81,7 @@ def func2(ss, start, end, criteria):
             r = float(criteria[3:])
             for i in range(len(ss)):
                 closest_dist = abs(ss[i]["r"]-r)
-                if ss[i]["r"] >= r and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end+1]):
+                if ss[i]["r"] >= r and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end]):
                     closest = [ss[i], closest_dist, i]
             if closest[0] != None:
                 schedule[closest[2]][start:end] = [True]*(end-start)
@@ -92,7 +92,7 @@ def func2(ss, start, end, criteria):
             r = float(criteria[3:])
             for i in range(len(ss)):
                 closest_dist = abs(ss[i]["r"]-r)
-                if ss[i]["r"] <= r and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end+1]):
+                if ss[i]["r"] <= r and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end]):
                     closest = [ss[i], closest_dist, i]
             if closest[0] != None:
                 schedule[closest[2]][start:end] = [True]*(end-start)
@@ -103,7 +103,7 @@ def func2(ss, start, end, criteria):
             r = float(criteria[2:])
             for i in range(len(ss)):
                 closest_dist = abs(ss[i]["r"]-r)
-                if ss[i]["r"] == r and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end+1]):
+                if ss[i]["r"] == r and closest_dist < closest[1] and all(t == False for t in schedule[i][start:end]):
                     closest = [ss[i], closest_dist, i]
             if closest[0] != None:
                 schedule[closest[2]][start:end] = [True]*(end-start)
@@ -114,7 +114,7 @@ def func2(ss, start, end, criteria):
             print("err")
     elif criteria[0:4] == "name":
         for i in range(len(ss)):
-            if ss[i]["name"] == criteria[5:] and all(t == False for t in schedule[i][start:end+1]):
+            if ss[i]["name"] == criteria[5:] and all(t == False for t in schedule[i][start:end]):
                 schedule[i][start:end] = [True]*(end-start)
                 print(ss[i]["name"])
         else:
@@ -156,10 +156,10 @@ def func3(index):
 
 
 print("==========Task 3==========")
-func3(1);
-func3(5);
-func3(10);
-func3(30);
+func3(1)
+func3(5)
+func3(10)
+func3(30)
 
 
 # task 4
@@ -174,18 +174,15 @@ def func4(sp, stat, n):
     if minSpIdx != -1:
         print(minSpIdx)
     else:
-        sumSp = 0
-        spSortedList = []
         maxSp = 0
         maxSpIdx = -1
         for i in range(len(sp)):
             if stat[i] == '0' and sp[i] > 0:
-                sumSp += sp[i]
-                spSortedList.append(sp[i])
+                # sumSp += sp[i]
                 if sp[i] > maxSp:
                     maxSpIdx = i
-        if sumSp >= n:
-            spSortedList.sort()
+                    maxSp = sp[i]
+        if maxSp > 0:
             print(maxSpIdx)
         else:
             print("Not enough space!")
