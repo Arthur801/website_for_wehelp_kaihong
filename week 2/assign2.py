@@ -178,14 +178,13 @@ def func4(sp, stat, n):
         maxSpIdx = -1
         for i in range(len(sp)):
             if stat[i] == '0' and sp[i] > 0:
-                # sumSp += sp[i]
                 if sp[i] > maxSp:
                     maxSpIdx = i
                     maxSp = sp[i]
         if maxSp > 0:
             print(maxSpIdx)
         else:
-            print("Not enough space!")
+            print("Error!")
 
 
 print("==========Task 4==========")
