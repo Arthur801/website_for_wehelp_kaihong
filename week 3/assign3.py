@@ -37,7 +37,7 @@ for hotel in hotelsListCH:
 # 寫入hotels.csv
 with open("./week 3/hotels.csv", 'w', newline="", encoding="utf-8") as fileHotels:
     writer = csv.DictWriter(fileHotels, fieldnames=["hotelNameCH", "hotelNameEN", "addressCH", "addressEN", "phone", "roomCount"], extrasaction="ignore")
-    writer.writeheader(["ChineseName","EnglishName","ChineseAddress","EnglishAddress","Phone","RoomCount"])
+
     for hotel in hotelsDict.values():
         writer.writerow(hotel)
 
@@ -63,10 +63,22 @@ for hotel in hotelsDict.values():
 with open("./week 3/districts.csv", 'w', newline="", encoding="utf-8") as fileDistricts:
     writer = csv.DictWriter(fileDistricts, fieldnames=["districtName", "hotelCount", "roomCount"], extrasaction="ignore")
 
-    writer.writeheader(["DistrictName","HotelCount","RoomCount"])
     for district in districtsDict.values():
         writer.writerow(district)
 
 
 # Task 2：Parse web page data and save to files by Python
+import requests
+from bs4 import BeautifulSoup
 
+INDEXPAGE = "https://www.ptt.cc/bbs/Steam/index.html"
+
+def fetchHTML(url):
+    with request.urlopen(url) as response:
+        htmlContext = response.read().decode("utf-8")
+    return htmlContext
+
+def parseHTML(html):
+    
+indexPageHTML = fetchHTML(INDEXPAGE)
+print(indexPageHTML)
