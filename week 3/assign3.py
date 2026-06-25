@@ -22,7 +22,7 @@ with request.urlopen("https://resources-wehelp-taiwan-b986132eca78c0b5eeb736fc03
 hotelsListCH = dataCH["list"]
 hotelsListEN = dataEN["list"]
 
-# 需要透過"_id"比對並取得hotelsListCH和horwlListEN中相同旅館的資料
+# 需要透過"_id"比對並取得hotelsListCH和hotelListEN中相同旅館的資料
 # 把hotelsListEN做成字典, key: _id, value: {"hotelName":"hn", "addressEN":"addr"}
 hotelsDict = {}
 for hotel in hotelsListEN:
@@ -37,7 +37,7 @@ for hotel in hotelsListCH:
 # 寫入hotels.csv
 with open("./week 3/hotels.csv", 'w', newline="", encoding="utf-8") as fileHotels:
     writer = csv.DictWriter(fileHotels, fieldnames=["hotelNameCH", "hotelNameEN", "addressCH", "addressEN", "phone", "roomCount"], extrasaction="ignore")
-
+    writer.writeheader(["ChineseName","EnglishName","ChineseAddress","EnglishAddress","Phone","RoomCount"])
     for hotel in hotelsDict.values():
         writer.writerow(hotel)
 
@@ -55,13 +55,18 @@ for hotel in hotelsDict.values():
         districtsDict[hotel["district"]].update({"hotelCount":1})
 
     if "roomCount" in districtsDict[hotel["district"]]:
-        districtsDict[hotel["district"]]["roomCount"] += eval(hotel["roomCount"])
+        districtsDict[hotel["district"]]["roomCount"] += int(hotel["roomCount"])
     else:
-        districtsDict[hotel["district"]].update({"roomCount":eval(hotel["roomCount"])})
+        districtsDict[hotel["district"]].update({"roomCount":int(hotel["roomCount"])})
 
 # 寫入districts.csv
 with open("./week 3/districts.csv", 'w', newline="", encoding="utf-8") as fileDistricts:
     writer = csv.DictWriter(fileDistricts, fieldnames=["districtName", "hotelCount", "roomCount"], extrasaction="ignore")
 
+    writer.writeheader(["DistrictName","HotelCount","RoomCount"])
     for district in districtsDict.values():
         writer.writerow(district)
+
+
+# Task 2：Parse web page data and save to files by Python
+
