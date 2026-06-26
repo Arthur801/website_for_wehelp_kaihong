@@ -1,18 +1,19 @@
 // 取得資料
 const SITE = "https://cwpeng.github.io/test"
+// 基本資料
 let attrs = fetch("https://cwpeng.github.io/test/assignment-3-1")
     .then((response) => response.json())
     .then(data => data.rows)
     .catch((error) => {
         console.log(`Error: ${error}`);
     });
+// 圖片資料
 let attrsPicture = fetch("https://cwpeng.github.io/test/assignment-3-2")
     .then((response) => response.json())
     .then(data => data.rows)
     .catch((error) => {
         console.log(`Error: ${error}`);
     });
-
 // 合併資料
 Promise.all([attrs, attrsPicture])
     .then(([attractions, pictures]) => {
@@ -32,13 +33,30 @@ Promise.all([attrs, attrsPicture])
         const contentBlocks = document.querySelector(".content-blocks");
         for(let i = 0; i < 10; i++) {
             const block = createBlock(attractions[3+i]);
-            contentBlocks.appendChild(block);
+            contentBlocks.appendChild(block);   
         }
+        
+
+        // task 4
+        let currentIdx = 13;
+        const loadBtn = document.querySelector("#loadBtn");
+        // 監聽loadBtn
+        loadBtn.addEventListener("click", () => {
+            let maxIdx = currentIdx+10;
+            if(maxIdx >= attractions.length) {
+                maxIdx = attractions.length;
+            }
+            for(let i = currentIdx; i < maxIdx; i++) {
+                const loadBlock = createBlock(attractions[i]);
+                contentBlocks.appendChild(loadBlock);
+            }
+            currentIdx += 10;
+            if(maxIdx == attractions.length) {
+                loadBtn.style.display = "none";
+            }
+        });
     });
 
-
-
-// 顯示blocks
 
 
 
@@ -87,9 +105,3 @@ function createBlock(attraction) {
     
     return block;
 }
-
-function renderBars(attraction) {}
-
-function renderBlocks(startIdx, count) {}
-
-function handleLoadMore() {}
