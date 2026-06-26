@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./wehelp_assignment_3_KaiHong.css">
+    <title>My Website</title>
+</head>
+<body>
+    <!--頂部的橫欄，mywebsite items-->
+    <div class="header">
+        <div class="header-logo">My Website</div>
+        <!--desktop menu-->
+        <div class="header-items">
+            <div class="header-item"><a>Item 1</a></div>
+            <div class="header-item"><a>Item 2</a></div>
+            <div class="header-item"><a>Item 3</a></div>
+            <div class="header-item"><a>Item 4</a></div>
+        </div>
+        <!--mobile menu burger button-->
+        <div class="header-items-mobile">
+            <button class="burgerbtn" id="burgerBtn"><img src="./svgviewer-output.svg" alt="mobile menu" width="30px" height="30px"></button>
+        </div>
+    </div>
+
+    <!--Popup menu-->
+    <div class="popup-menu" id="popupMenu">
+        <button class="closebtn" id="closeBtn">X</button>
+        <div class="pupmenu-item"><a>Item 1</a></div>
+        <div class="pupmenu-item"><a>Item 2</a></div>
+        <div class="pupmenu-item"><a>Item 3</a></div>
+        <div class="pupmenu-item"><a>Item 4</a></div>
+    </div>
+
+    <!--淺藍色的橫幅，Welcome to MyHome-->
+    <div class="welcome-banner">Welcome to MyHome</div>
+    <!--main-content-->
+    <div class="main-content">
+        <!--Bars-->
+        <div class="bars">
+
+        </div>
+        <!--content blocks-->
+        <div class="content-blocks">
+            
+        </div>
+
+        <button class="load-more-btn">Load More</button>
+    </div>
+
+    <script>
+        const burgerBtn = document.querySelector("#burgerBtn");
+        const closeBtn = document.querySelector("#closeBtn");
+        const popupMenu = document.querySelector("#popupMenu")
+
+        burgerBtn.addEventListener("click", () => {
+            popupMenu.classList.add("active");
+        });
+
+        closeBtn.addEventListener("click", () => {
+            popupMenu.classList.remove("active");
+        });
+    </script>
+    <script src="./assign3.js"></script>
+</body>
+</html>
