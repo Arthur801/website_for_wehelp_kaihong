@@ -68,17 +68,79 @@ with open("./week 3/districts.csv", 'w', newline="", encoding="utf-8") as fileDi
 
 
 # Task 2：Parse web page data and save to files by Python
-import requests
 from bs4 import BeautifulSoup
+import urllib.parse as parse
 
 INDEXPAGE = "https://www.ptt.cc/bbs/Steam/index.html"
+MAINPAGE = "https://www.ptt.cc"
 
+# 用beautifulsoup取得網頁html資料
 def fetchHTML(url):
     with request.urlopen(url) as response:
-        htmlContext = response.read().decode("utf-8")
+        webpageContext = response.read().decode("utf-8")
+        htmlContext = BeautifulSoup(webpageContext, "html.parser")
     return htmlContext
 
-def parseHTML(html):
+# 將html文章列表資料中取出文章標題、推、文章連結
+def parseIndexHTML(html):
+    articles = html.select("div.r-ent")
+    articlesList = []
+
+    for article in articles:
+        titleTag = article.select_one("div.title a")
+        nrecTag = article.select_one("div.nrec")
+
+        title = titleTag.get_text(strip=True) if titleTag else "已刪文"
+        href = titleTag.get("href") if titleTag else ""
+        fullUrl = parse.urljoin(MAINPAGE, href)
+        nrec = nrecTag.get_text(strip=True) if nrecTag else ""
+        
+        if title == "已刪文":
+            continue
+        elif nrec == "":
+            nrec = "0"
+        articlesList.append({"title":title, "nrec":nrec, "url":fullUrl})
+    return articlesList
+
+# 取得上頁url
+def getPreviousPageUrl(html):
+    prevPageUrl = html.find("a", string="‹ 上頁")
+
+    if prevPageUrl:
+        href = prevPageUrl["href"]
+        fullUrl = parse.urljoin(MAINPAGE, href)
+        return fullUrl
+    else:
+        return None
     
+# 取得文章發文時間
+def parseTime(url):
+    articlePageHTML = fetchHTML(url)
+    label = articlePageHTML.find("span", string="時間")
+    time = label.findNextSibling("span").get_text(strip=True) if label else ""
+    if time:
+        return time
+    else:
+        return ""
+
+# 重複執行上頁並取得文章資料三次
 indexPageHTML = fetchHTML(INDEXPAGE)
-print(indexPageHTML)
+articles = []
+for i in range(3):
+    articles= articles+parseIndexHTML(indexPageHTML)
+    if i < 2:
+        prevUrl = getPreviousPageUrl(indexPageHTML)
+        if prevUrl == None:
+            break
+        indexPageHTML = fetchHTML(prevUrl)
+
+# 把時間加到article的字典中
+for article in articles:
+    article["time"] = parseTime(article["url"])
+
+# 寫入articles.csv
+with open("./week 3/articles.csv", 'w', newline="", encoding="utf-8") as file:
+    writer = csv.DictWriter(file, fieldnames=["title", "time", "nrec"], extrasaction="ignore")
+
+    for article in articles:
+        writer.writerow(article)
