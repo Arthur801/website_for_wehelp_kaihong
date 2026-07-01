@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/static.css">
+    <title>My Website</title>
+</head>
+<body>
+    <section class="view">
+        <div class="signin-bannar">歡迎光臨，請輸入信箱密碼</div>
+        <div class="signin-system-text">登入系統</div>
+        <form id="signin-form">
+            <!--mail-->
+            <div class="field">
+                <span class="field-name">信箱</span>
+                <input type="email" name="email" required>
+            </div>
+
+            <!--password-->
+            <div class="field">
+                <span class="field-name">密碼</span>
+                <input type="password" name="password" required>
+            </div>
+
+            <!--checkbox-->
+            <div class="field">
+                <span class="field-name">同意條款</span>
+                <input type="checkbox" name="confirm-policy">
+            </div>
+
+            <!--button-->
+            <div class="field">
+                <button name="btn">登入</button>
+                <div class="error" id="signin-error">登入錯誤</div>
+            </div>
+        </form>
+    </section>
+
+    <script>
+        const signinForm = document.getElementById("signin-form");
+        const confirmPolicy = document.querySelector('input[name="confirm-policy"]');
+        const errorMessageNoChecked = document.getElementById("signin-error");
+
+        signinForm.addEventListener('submit', function(event) {
+            if(!confirmPolicy.checked) {
+                event.preventDefault();
+                errorMessageNoChecked.style.display = 'block';
+                alert("請勾選同意條款")
+            }
+            else {
+                errorMessageNoChecked.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
