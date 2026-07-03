@@ -13,16 +13,20 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    
+    width: 369px;
 
     border: 1px solid rgba(130, 130, 130, 30%);
     padding-bottom: 10px;
 }
 
-.signin-bannar {
+.bannar {
     box-sizing: border-box;
+    width: 369px;
     background-color: rgb(59, 82, 100);
     font-size: 24px;
     font-weight: 900;
+    text-align: center;
     color:white;
     justify-content: center;
     align-items: center;
@@ -30,10 +34,10 @@ body {
     margin-bottom: 20px;
 }
 
-.signin-system-text {
+.system-text {
     display: block;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    padding: 5px 5px;
 }
 
 #signin-form {

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/static.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='/static.css') }}">
     <title>My Website</title>
 </head>
 <body>
     <section class="view">
-        <div class="signin-bannar">歡迎光臨，請輸入信箱密碼</div>
-        <div class="signin-system-text">登入系統</div>
-        <form id="signin-form">
+        <div class="bannar">歡迎光臨，請輸入信箱密碼</div>
+        <div class="system-text">登入系統</div>
+        <form id="signin-form" action="/signin" method="post">
             <!--mail-->
             <div class="field">
                 <span class="field-name">信箱</span>
