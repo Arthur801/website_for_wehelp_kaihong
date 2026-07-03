@@ -14,13 +14,13 @@
             <!--mail-->
             <div class="field">
                 <span class="field-name">信箱</span>
-                <input type="email" name="email" required>
+                <input type="text" name="email">
             </div>
 
             <!--password-->
             <div class="field">
                 <span class="field-name">密碼</span>
-                <input type="password" name="password" required>
+                <input type="password" name="password">
             </div>
 
             <!--checkbox-->
@@ -35,23 +35,20 @@
                 <div class="error" id="login-error">登入錯誤</div>
             </div>
         </form>
+        
+    </section>
+    <section class="view">
+         <div class="system-text">取得旅館資訊</div>
+        <!--serial number for hotel-->
+        <div class="field">
+            <span class="field-name">編號</span>
+            <input type="text" id="hotel-search-id">
+        </div>
+        <div class="field">
+            <button id="search-btn">取得</button>
+        </div>
     </section>
 
-    <script>
-        const loginForm = document.getElementById("login-form");
-        const confirmPolicy = document.querySelector('input[name="confirm-policy"]');
-        const errorMessageNoChecked = document.getElementById("login-error");
-
-        loginForm.addEventListener('submit', function(event) {
-            if(!confirmPolicy.checked) {
-                event.preventDefault();
-                errorMessageNoChecked.style.display = 'block';
-                alert("請勾選同意條款")
-            }
-            else {
-                errorMessageNoChecked.style.display = 'none';
-            }
-        });
-    </script>
+    <script src="/static/script.js"></script>
 </body>
 </html>
