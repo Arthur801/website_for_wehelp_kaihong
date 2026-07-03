@@ -38,9 +38,10 @@ body {
     display: block;
     font-size: 18px;
     padding: 5px 5px;
+    text-align: center;
 }
 
-#signin-form {
+#login-form {
     display: flex;
     flex-direction: column;
     padding: 5px;

@@ -22,8 +22,8 @@ async def index(request: Request):
         name="index.html"
     )
 
-@app.post("/signin")
-async def signin(email: Annotated[str, Form()], password: Annotated[str, Form()]):
+@app.post("/login")
+async def login(email: Annotated[str, Form()], password: Annotated[str, Form()]):
     if email == "" or password == "":
         return RedirectResponse(
             url="/ohoh?msg=請輸入信箱和密碼",
@@ -54,4 +54,10 @@ async def ohoh(request: Request, msg: str = ""):
         request=request,
         name="ohoh.html",
         context={"msg": msg}
+    )
+
+@app.get("/logout")
+async def logout(request: Request):
+    return RedirectResponse(
+        url="/"
     )

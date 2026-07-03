@@ -10,7 +10,7 @@
     <section class="view">
         <div class="bannar">歡迎光臨，請輸入信箱密碼</div>
         <div class="system-text">登入系統</div>
-        <form id="signin-form" action="/signin" method="post">
+        <form id="login-form" action="/login" method="post">
             <!--mail-->
             <div class="field">
                 <span class="field-name">信箱</span>
@@ -32,17 +32,17 @@
             <!--button-->
             <div class="field">
                 <button name="btn">登入</button>
-                <div class="error" id="signin-error">登入錯誤</div>
+                <div class="error" id="login-error">登入錯誤</div>
             </div>
         </form>
     </section>
 
     <script>
-        const signinForm = document.getElementById("signin-form");
+        const loginForm = document.getElementById("login-form");
         const confirmPolicy = document.querySelector('input[name="confirm-policy"]');
-        const errorMessageNoChecked = document.getElementById("signin-error");
+        const errorMessageNoChecked = document.getElementById("login-error");
 
-        signinForm.addEventListener('submit', function(event) {
+        loginForm.addEventListener('submit', function(event) {
             if(!confirmPolicy.checked) {
                 event.preventDefault();
                 errorMessageNoChecked.style.display = 'block';
