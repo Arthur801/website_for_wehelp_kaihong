@@ -130,7 +130,7 @@ for i in range(3):
     articles= articles+parseIndexHTML(indexPageHTML)
     if i < 2:
         prevUrl = getPreviousPageUrl(indexPageHTML)
-        if prevUrl == None:
+        if prevUrl is None:
             break
         indexPageHTML = fetchHTML(prevUrl)
 
