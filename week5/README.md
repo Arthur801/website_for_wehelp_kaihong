@@ -49,7 +49,7 @@ SELECT * FROM member;
 
 ![task3_1](./Task3_1.png)
 
-![task3_2](./task3_2.png)
+![task3_2](./Task3_2.png)
 
 # Task 4
 
