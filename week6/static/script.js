@@ -4,8 +4,8 @@ const signupName = document.getElementById("signup-user-name");
 const signupEmail = document.getElementById("signup-email");
 const signupPwd = document.getElementById("signup-password");
 
-loginForm.addEventListener('submit', function(event) {
-    const userName = signupName.value.tirm();
+signupForm.addEventListener('submit', function(event) {
+    const userName = signupName.value.trim();
     const email = signupEmail.value.trim();
     const password = signupPwd.value.trim();
     if (userName === '') {
@@ -18,5 +18,4 @@ loginForm.addEventListener('submit', function(event) {
         event.preventDefault();
         alert("請填寫密碼")
     } 
-    
 });
