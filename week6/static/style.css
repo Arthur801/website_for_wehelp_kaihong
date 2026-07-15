@@ -42,7 +42,15 @@ body {
     text-align: center;
 }
 
-#login-form {
+.system-text {
+    display: block;
+    font-size: 20px;
+    padding: 5px 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+form {
     display: flex;
     flex-direction: column;
     padding: 5px;

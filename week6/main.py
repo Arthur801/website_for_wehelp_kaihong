@@ -151,4 +151,6 @@ async def logout(request: Request):
         url="/"
     )
 
-# 
+# GET /api/message
+
+# POST /api/message

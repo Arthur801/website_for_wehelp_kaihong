@@ -36,3 +36,8 @@ loginForm.addEventListener('submit', function(event){
         alert("請填寫密碼");
     } 
 });
+
+// task 5 POST message
+
+
+// task 5 GET message
