@@ -50,6 +50,18 @@ body {
     font-weight: bold;
 }
 
+.message {
+    display: block;
+    font-size: 18px;
+    padding: 5px 5px;
+    text-align: center;
+}
+
+.message-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
 form {
     display: flex;
     flex-direction: column;

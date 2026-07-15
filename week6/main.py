@@ -69,7 +69,12 @@ async def index(request: Request):
 async def signup(request: Request, userName: Annotated[str, Form()],
                 email: Annotated[str, Form()],
                 password: Annotated[str, Form()]):
-    # 輸入包含空值，在前端檢查，後端不寫檢查程式碼
+    # 後端再次檢查是否為空
+    if email == "" or password == "":
+        return RedirectResponse(
+            url="/ohoh?msg=請輸入姓名、電子郵件與密碼",
+            status_code=303
+        )
     # 建一個signup專用的cursor避免共用global的cursor，檢查user email 帳號是否已存在，是則導向錯誤頁面，error msg = "重複的電子郵件"
     signupCursor = websiteDB.cursor()
     signupCursor.execute("SELECT * FROM member WHERE email = %s LIMIT 1", (email, )) # 必須是list, tuple或dict
@@ -151,6 +156,14 @@ async def logout(request: Request):
         url="/"
     )
 
-# GET /api/message
-
 # POST /api/message
+@app.post("/api/message")
+async def sendMessage(request: Request,
+                      content: str = ""
+                      ):
+    pass
+
+# GET /api/message
+@app.get("/api/message")
+async def getMessage(request: Request):
+    pass

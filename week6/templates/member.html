@@ -14,16 +14,22 @@
     </section>
     <section class="view">
         <div class="system-text-bold">快來留言吧</div>
-        <div class="field">
-            <span class="field-name">內容</span>
-            <input type="text" id="input-content">
-        </div>
-        <div class="field">
-            <button id="send-content-btn">送出</button>
-        </div>
+        <form id="message-form" action="/api/message" method="post">
+            <div class="field">
+                <span class="field-name" name = "content">內容</span>
+                <input type="text" id="input-content">
+            </div>
+            <div class="field">
+                <button id="send-content-btn">送出</button>
+            </div>
+        </form>
+        
     </section>
     <section class="view">
         <!--動態新增留言-->
+        <div class="message">
+            <span class="message-name">{{ messageUser }}:</span>{{ messageContent }}
+        </div>
     </section>
 </body>
 </html>
