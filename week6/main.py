@@ -128,10 +128,11 @@ async def ohoh(request: Request, msg: str = ""):
         context={"msg": msg}
     )
 
-# 在使用者頁面選擇登出，將登入狀態設為false，避免使用者能在未登入的狀態下進入使用者頁面
+# 在使用者頁面選擇登出，將session中的資料變成空值，避免使用者能在未登入的狀態下進入使用者頁面
 @app.get("/logout")
 async def logout(request: Request):
-    request.session["LOGGED-IN"] = False
+    request.session["userID"] = None
+    request.session["userName"] = None
     return RedirectResponse(
         url="/"
     )
