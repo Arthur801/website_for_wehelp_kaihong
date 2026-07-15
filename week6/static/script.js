@@ -4,7 +4,7 @@ const signupName = document.getElementById("signup-user-name");
 const signupEmail = document.getElementById("signup-email");
 const signupPwd = document.getElementById("signup-password");
 
-signupForm.addEventListener('submit', function(event) {
+signupForm.addEventListener('submit', async function(event) {
     const userName = signupName.value.trim();
     const email = signupEmail.value.trim();
     const password = signupPwd.value.trim();
@@ -25,7 +25,7 @@ const loginForm = document.getElementById("login-form");
 const loginEmail = document.getElementById("login-email");
 const loginPwd = document.getElementById("login-password");
 
-loginForm.addEventListener('submit', function(event){ 
+loginForm.addEventListener('submit', async function(event){ 
     const email = loginEmail.value.trim();
     const password = loginPwd.value.trim();
     if (email === "") {
@@ -36,8 +36,3 @@ loginForm.addEventListener('submit', function(event){
         alert("請填寫密碼");
     } 
 });
-
-// task 5 POST message
-
-
-// task 5 GET message

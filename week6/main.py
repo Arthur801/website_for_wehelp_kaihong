@@ -1,4 +1,5 @@
 from typing import Annotated
+from pydantic import BaseModel
 
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -8,6 +9,18 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 import mysql.connector
 
+class messageData(BaseModel):
+    id:int
+    name:str
+    content:str
+    self:bool
+
+class responseMessageCreate(BaseModel):
+    ok:bool
+    data:list[messageData]
+
+class requestMessageCreate(BaseModel):
+    content:str
 
 # 建立fastapi server
 app=FastAPI()
@@ -43,7 +56,7 @@ mycursor.execute(
 # 留言table
 mycursor.execute(
     """
-    CREATE TABLE message (
+    CREATE TABLE IF NOT EXISTS message(
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         member_id INT UNSIGNED NOT NULL, 
         CONSTRAINT fk_id FOREIGN KEY (member_id) REFERENCES member(id),
@@ -137,6 +150,18 @@ async def member(request: Request, userName):
             url="/",
             status_code=303
         )
+# 輸入.../member也根據session中的資料導向member page
+@app.get("/member")
+async def memberRedirect(request: Request):
+    if not request.session.get("userName"):
+        return RedirectResponse(
+            url="/",
+            status_code=303
+        )
+    return RedirectResponse(
+        url=f"/member/{request.session.get("userName")}",
+        status_code=303
+    )
 
 # 接入錯誤頁面
 @app.get("/ohoh")
@@ -158,11 +183,27 @@ async def logout(request: Request):
 
 # POST /api/message
 @app.post("/api/message")
-async def sendMessage(request: Request,
-                      content: str = ""
-                      ):
-    pass
+async def sendMessage(request: Request,message: requestMessageCreate):
+    userName,userID = request.session["userName"], request.session["userID"]
+    # 檢查登入狀態、message content，有問題回傳{"error":Ture}
+    if not userName or not userID:
+        return { "error": True }
+    content = message.content
+    if not message or not content:
+        return { "error": True }
 
+    # 若登入狀態與message content 都沒有問題，建立cursor，將message存到websiteDB裡的table message
+    try:
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("INSERT INTO message (member_id, content) VALUES (%s, %s);", (userID, content))
+        websiteDB.commit()
+        messageCursor.close()
+        return { "ok": True }
+    except Exception as e:
+        websiteDB.rollback()
+        if messageCursor:
+            messageCursor.close()
+        return { "error": True }
 # GET /api/message
 @app.get("/api/message")
 async def getMessage(request: Request):
