@@ -27,6 +27,7 @@ websiteDB = mysql.connector.connect(
 mycursor = websiteDB.cursor()
 mycursor.execute("CREATE DATABASE IF NOT EXISTS website")
 mycursor.execute("USE website")
+# member table
 mycursor.execute(
     """
     CREATE TABLE IF NOT EXISTS member (
@@ -35,6 +36,19 @@ mycursor.execute(
         email varchar(255) NOT NULL UNIQUE,
         password varchar(255) NOT NULL,
         follower_count INT UNSIGNED NOT NULL DEFAULT 0,
+        time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+)
+# 留言table
+mycursor.execute(
+    """
+    CREATE TABLE message (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        member_id INT UNSIGNED NOT NULL, 
+        CONSTRAINT fk_id FOREIGN KEY (member_id) REFERENCES member(id),
+        content MEDIUMTEXT NOT NULL,
+        like_count INT UNSIGNED NOT NULL DEFAULT 0,
         time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     """
@@ -136,3 +150,5 @@ async def logout(request: Request):
     return RedirectResponse(
         url="/"
     )
+
+# 
