@@ -83,29 +83,26 @@ async def signup(request: Request, userName: Annotated[str, Form()],
 # 首頁登入
 @app.post("/login")
 async def login(request: Request,
-                email: Annotated[str, Form()] = "",
-                password: Annotated[str, Form()] = ""):
-    
-    if email == "" or password == "":
-        # 為填入資料導向錯誤頁面，並傳入錯誤訊息
-        return RedirectResponse(
-            url="/ohoh?msg=請輸入信箱和密碼",
-            status_code=303
-        )
-    
-    if email in USER_DATABASE:
-        if password == USER_DATABASE[email]:
-            request.session["LOGGED-IN"] = True
-            # 判斷登入成功後導向使用者頁面
-            return RedirectResponse(
-                url="/member",
-                status_code=303
-            )
-    return RedirectResponse(
-        # 登入資料輸入錯誤後導向錯誤頁面，並傳入錯誤訊息
-        url="/ohoh?msg=信箱或密碼輸入錯誤",
-        status_code=303
-    )
+                email: Annotated[str, Form()],
+                password: Annotated[str, Form()]):
+    # 前端檢查登入資料是否為空，後端不檢查
+    # 建一個登入專用cursor，檢查登入資料與資料庫中的member email 和password 是否吻合，是則導向member page，否則導向error page
+    loginCursor = websiteDB.cursor()
+    loginCursor.execute("SELECT * FROM member WHERE email = %s AND password = %s LIMIT 1", (email, password))
+
+    # if email in USER_DATABASE:
+    #     if password == USER_DATABASE[email]:
+    #         request.session["LOGGED-IN"] = True
+    #         # 判斷登入成功後導向使用者頁面
+    #         return RedirectResponse(
+    #             url="/member",
+    #             status_code=303
+    #         )
+    # return RedirectResponse(
+    #     # 登入資料輸入錯誤後導向錯誤頁面，並傳入錯誤訊息
+    #     url="/ohoh?msg=信箱或密碼輸入錯誤",
+    #     status_code=303
+    # )
 
 # 接入使用者頁面
 @app.get("/member")
