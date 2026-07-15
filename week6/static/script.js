@@ -10,12 +10,12 @@ signupForm.addEventListener('submit', function(event) {
     const password = signupPwd.value.trim();
     if (userName === '') {
         event.preventDefault();
-        alert("請填寫姓名")
+        alert("請填寫姓名");
     } else if (email === '') {
         event.preventDefault();
-        alert("請填寫email")
+        alert("請填寫email");
     } else if (password === '') {
         event.preventDefault();
-        alert("請填寫密碼")
+        alert("請填寫密碼");
     } 
 });
