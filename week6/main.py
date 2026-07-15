@@ -199,12 +199,37 @@ async def sendMessage(request: Request,message: requestMessageCreate):
         websiteDB.commit()
         messageCursor.close()
         return { "ok": True }
-    except Exception as e:
+    except Exception:
         websiteDB.rollback()
         if messageCursor:
             messageCursor.close()
         return { "error": True }
+    
 # GET /api/message
 @app.get("/api/message")
 async def getMessage(request: Request):
-    pass
+    currentUserName, currentUserID = request.session["userName"], request.session["userID"]
+    # 檢查登入狀態
+    if not currentUserName or not currentUserID:
+        return { "error": True }
+    
+    # 建立cursor，取出message
+    try:
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("SELECT message.*, member.name FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC")
+        messages = messageCursor.fetchall()
+        data = []
+        for msg in messages:
+            data.append({
+                "id": msg[0],
+                "name": msg[5],
+                "content": msg[2],
+                "self": currentUserID == msg[1]
+            })
+
+        messageCursor.close()
+        return { "ok": True, "data": data }
+    except Exception:
+        if messageCursor:
+            messageCursor.close()
+        return { "error": True }

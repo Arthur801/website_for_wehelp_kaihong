@@ -1,3 +1,6 @@
+// 頁面載入GET messages
+
+
 // task 5 POST message
 const messageForm = document.getElementById("message-form");
 
@@ -26,4 +29,5 @@ if (messageForm) {
         }
     });
 }
-// task 5 GET message
+
+// task 5 GET message render function
