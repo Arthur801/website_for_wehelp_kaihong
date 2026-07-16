@@ -83,7 +83,7 @@ async def signup(request: Request, userName: Annotated[str, Form()],
                 email: Annotated[str, Form()],
                 password: Annotated[str, Form()]):
     # 後端再次檢查是否為空
-    if email == "" or password == "":
+    if email == "" or password == "" or userName == "":
         return RedirectResponse(
             url="/ohoh?msg=請輸入姓名、電子郵件與密碼",
             status_code=303
@@ -118,13 +118,14 @@ async def login(request: Request,
     userData = loginCursor.fetchone()
     if userData is not None:
         # session存member ID 和姓名
-        userID, userName = userData[0], userData[1]
+        userID, userName, userEmail = userData[0], userData[1], userData[2]
         request.session["userID"] = userID
         request.session["userName"] = userName
+        request.session["userEmail"] = userEmail
         loginCursor.close()
 
         return RedirectResponse(
-            url=f"/member/{userName}",
+            url="/member",
             status_code=303
         )
     else:
@@ -135,14 +136,14 @@ async def login(request: Request,
         )
 
 # 接入使用者頁面
-@app.get("/member/{userName}")
-async def member(request: Request, userName):
+@app.get("/member")
+async def member(request: Request,):
     # 進入使用者頁面，先用middleware檢查登入狀態
     if request.session.get("userName") is not None:
         return templates.TemplateResponse(
             request=request,
             name="member.html",
-            context={"userName": userName}
+            context={"userName": request.session.get("userName")}
         )
     # 若未登入則導向首頁
     else:
@@ -150,18 +151,6 @@ async def member(request: Request, userName):
             url="/",
             status_code=303
         )
-# 輸入.../member也根據session中的資料導向member page
-@app.get("/member")
-async def memberRedirect(request: Request):
-    if not request.session.get("userName"):
-        return RedirectResponse(
-            url="/",
-            status_code=303
-        )
-    return RedirectResponse(
-        url=f"/member/{request.session.get("userName")}",
-        status_code=303
-    )
 
 # 接入錯誤頁面
 @app.get("/ohoh")
@@ -177,6 +166,7 @@ async def ohoh(request: Request, msg: str = ""):
 async def logout(request: Request):
     request.session["userID"] = None
     request.session["userName"] = None
+    request.session["userEmail"] = None
     return RedirectResponse(
         url="/"
     )
@@ -184,7 +174,7 @@ async def logout(request: Request):
 # POST /api/message
 @app.post("/api/message")
 async def sendMessage(request: Request,message: requestMessageCreate):
-    userName,userID = request.session["userName"], request.session["userID"]
+    userName,userID = request.session.get("userName"), request.session.get("userID")
     # 檢查登入狀態、message content，有問題回傳{"error":Ture}
     if not userName or not userID:
         return { "error": True }
@@ -193,27 +183,29 @@ async def sendMessage(request: Request,message: requestMessageCreate):
         return { "error": True }
 
     # 若登入狀態與message content 都沒有問題，建立cursor，將message存到websiteDB裡的table message
+    messageCursor = None
     try:
         messageCursor = websiteDB.cursor()
         messageCursor.execute("INSERT INTO message (member_id, content) VALUES (%s, %s);", (userID, content))
         websiteDB.commit()
-        messageCursor.close()
         return { "ok": True }
     except Exception:
         websiteDB.rollback()
-        if messageCursor:
-            messageCursor.close()
         return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()
     
 # GET /api/message
 @app.get("/api/message")
 async def getMessage(request: Request):
-    currentUserName, currentUserID = request.session["userName"], request.session["userID"]
+    currentUserName, currentUserID = request.session.get("userName"), request.session.get("userID")
     # 檢查登入狀態
     if not currentUserName or not currentUserID:
         return { "error": True }
     
     # 建立cursor，取出message
+    messageCursor = None
     try:
         messageCursor = websiteDB.cursor()
         messageCursor.execute("SELECT message.*, member.name FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC")
@@ -227,9 +219,36 @@ async def getMessage(request: Request):
                 "self": currentUserID == msg[1]
             })
 
-        messageCursor.close()
         return { "ok": True, "data": data }
     except Exception:
-        if messageCursor:
-            messageCursor.close()
         return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()
+    
+# DELETE /api/message
+@app.delete("/api/message/{messageID}")
+async def delMessage(request: Request, messageID: str):
+    currentUserID = request.session.get("userID")
+    # 檢查登入狀態
+    if not currentUserID:
+        return { "error": True }
+    
+    # 建立cursor，確認資料庫裡有messageID符合的message，刪除該message，否則回傳error
+    messageCursor = None
+    try:
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("SELECT * FROM message WHERE message.id = %s", (messageID, ))
+        messageToDel = messageCursor.fetchone()
+        if not messageToDel:
+            return { "error": True }
+        if messageToDel[1] != currentUserID:
+            return { "error": True }
+        messageCursor.execute("DELETE FROM message WHERE id = %s AND message.member_id = %s", (messageID, currentUserID))
+        websiteDB.commit()
+        return { "ok": True }
+    except Exception:
+        return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()

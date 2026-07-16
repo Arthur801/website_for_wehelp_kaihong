@@ -21,8 +21,11 @@ if (messageForm) {
                 throw new Error(`Server error:${response.status}`);
             }
             const data = await response.json();
+            if (!data.ok) {
+                throw new Error("後端建立留言失敗");
+            }
             // 載入並渲染message
-            loadMessages();
+            await loadMessages();
             // 清空輸入框
             messageArea.value = '';
         } catch (error) {
@@ -40,7 +43,10 @@ async function loadMessages() {
             throw new Error(`Server error:${response.status}`);
         }
         const responseData = await response.json();
-        renderMessages(responseData.data);
+        if (responseData.error) {
+            throw new Error(`Server error:${response.status}`);
+        }
+        await renderMessages(responseData.data);
     } catch (error) {
         console.error("發生錯誤:", error);
         alert("取得留言失敗");
@@ -73,5 +79,47 @@ async function createMessageElement(msg) {
     messageElement.appendChild(msgUserName);
     messageElement.appendChild(msgContent);
 
+    // task 6 if msg.self === true, add delete button
+
+    if (msg.self === true) {
+        const msgDelBtn = document.createElement("button");
+        msgDelBtn.type = "button";
+        msgDelBtn.textContent = 'X';
+
+        msgDelBtn.addEventListener("click", async () => {
+            const delMsgConfirmed = confirm("你確定要刪除這則留言嗎?");
+
+            if (!delMsgConfirmed) {
+                return;
+            }
+
+            await delMessage(msg.id);
+        });
+
+        messageElement.appendChild(msgDelBtn);
+    }
+
+
     return(messageElement);
+}
+
+// delete message
+async function delMessage(messageID) {
+    try {
+        // 通知後端刪除資料庫裡的留言
+        const response = await fetch(`/api/message/${messageID}`, { method: 'DELETE' });
+        if (!response.ok) {
+            throw new Error(`Server error:${response.status}`);
+        }
+        const responseData = await response.json();
+
+        if (!responseData.ok) {
+            throw new Error("後端刪除失敗");
+        }
+        // 重新渲染留言
+        await loadMessages();
+    } catch(error) {
+        console.error("刪除留言失敗:", error);
+        alert("刪除留言失敗");
+    } 
 }
