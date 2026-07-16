@@ -34,8 +34,8 @@ templates = Jinja2Templates(directory="templates") # 同第16行
 # 建立db與tables
 websiteDB = mysql.connector.connect(
     host="localhost",
-    user="Test",
-    password="abcd1234!"
+    user="test",
+    password="Abcd1234!"
 )
 mycursor = websiteDB.cursor()
 mycursor.execute("CREATE DATABASE IF NOT EXISTS website")
