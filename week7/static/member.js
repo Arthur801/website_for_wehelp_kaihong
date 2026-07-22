@@ -35,6 +35,21 @@ if (messageForm) {
     });
 }
 
+// week 7 task 1 監測token btn 有沒有被按下
+const tokenBtn = document.getElementById("create-token");
+if (tokenBtn) {
+    tokenBtn.addEventListener('click', async function() {
+        const userToken = await sendToken();
+        if(userToken===false) {
+            console.log("建立token失敗");
+        }
+        else {
+            // 建立token element
+            renderToken(userToken);
+        }
+    });
+}
+
 // task 5 GET message render function
 async function loadMessages() {
     try {
@@ -121,5 +136,42 @@ async function delMessage(messageID) {
     } catch(error) {
         console.error("刪除留言失敗:", error);
         alert("刪除留言失敗");
+    } 
+}
+
+// week 7 task 1
+// 把後端生成的token傳遞到前端
+async function sendToken() {
+    try {
+        // fetch /api/token
+        const response = await fetch("api/token", { method : 'PUT' });
+        if(!response.ok) {
+            throw new Error(`Server error:${response.status}`);
+        }
+
+        const responseData = await response.json();
+        if(!responseData.ok) {
+            console.log(response);
+            throw new Error("後端建立token失敗")
+        }
+        return responseData.token;
+
+    } catch(error) {
+        console.log("建立token失敗:", error);
+        alert("建立token失敗")
+        return false;
+    }
+}
+
+async function renderToken(token) {
+    try {
+        const tokenContainer = document.querySelector(".token");
+        tokenContainer.replaceChildren();
+        const tokenElement = document.createElement("span");
+        tokenElement.textContent = token;
+        tokenContainer.appendChild(tokenElement);
+    } catch(error) {
+        console.log("前端建立token element 失敗")
+        alert("顯示token失敗")
     } 
 }
