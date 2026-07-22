@@ -9,6 +9,10 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 import mysql.connector
 
+import hashlib
+import time 
+import random
+
 class messageData(BaseModel):
     id:int
     name:str
@@ -49,7 +53,8 @@ mycursor.execute(
         email varchar(255) NOT NULL UNIQUE,
         password varchar(255) NOT NULL,
         follower_count INT UNSIGNED NOT NULL DEFAULT 0,
-        time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+        time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        token varchar(255) UNIQUE
     );
     """
 )
@@ -256,4 +261,30 @@ async def delMessage(request: Request, messageID: str):
 # api token
 @app.put("/api/token")
 async def createToken(request: Request):
-    pass
+    tokenCursor = None
+    try:
+        # 檢查登入狀態
+        if not request.session.get("userID"):
+            return { "error": True }
+        # 建立userToken
+        t = str(time.time())
+        random.seed()
+        userToken = hashlib.sha256((request.session.get("userEmail") + t + str(random.random())).encode("utf-8")).hexdigest()
+        # 思考看看有沒有需要檢查重複token的問題，機率太低可以不考慮
+
+        # update token, 無論該user 有沒有建立過token，直接update 資料庫即可
+        tokenCursor = websiteDB.cursor()
+        tokenCursor.execute("SELECT * FROM member WHERE id = %s", (request.session.get("userID"), ))
+        currentUser = tokenCursor.fetchone()
+        if not currentUser:
+            return { "error": True }
+        tokenCursor.execute("UPDATE member SET token = %s WHERE id = %s", (userToken, request.session.get("userID")))
+        websiteDB.commit()
+
+        return { "ok": True , "token": userToken }
+    except Exception:
+        websiteDB.rollback()
+        return { "error": True }
+    finally:
+        if tokenCursor is not None:
+            tokenCursor.close()
