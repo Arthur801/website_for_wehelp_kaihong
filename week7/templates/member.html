@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+    <title>My Website</title>
+</head>
+<body>
+    <section class="view">
+        <div class="bannar">歡迎光臨，這裡是會員頁</div>
+        <div class="system-text">{{ userName }}，歡迎登入系統</div>
+        <div class="system-text"><a href="/logout">登出系統</a></div>
+    </section>
+    <section class="view">
+        <div class="system-text-bold">MCP伺服器設定</div>
+        <div class="system-text">請使用http://127.0.0.1:8000/mcp/ 網址</div>
+        <div class="system-text">點擊產生token金鑰</div>
+        <div class="field">
+            <button id="create-token">產生 Token</button>
+            <div class="token" id="user-token">{{ userToken }}</div>
+        </div>
+    </section>
+    <section class="view">
+        <div class="system-text-bold">快來留言吧</div>
+        <form id="message-form" action="/api/message" method="post">
+            <div class="field">
+                <span class="field-name">內容</span>
+                <input type="text" id="input-content" name="content">
+            </div>
+            <div class="field">
+                <button id="send-content-btn">送出</button>
+            </div>
+        </form>
+        
+    </section>
+    <section class="view">
+        <!--動態新增留言-->
+        <div class="messages">
+            
+        </div>
+    </section>
+    <script src="/static/member.js"></script>
+</body>
+</html>
