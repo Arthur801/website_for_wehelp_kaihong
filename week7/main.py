@@ -1,7 +1,7 @@
 from typing import Annotated
 from pydantic import BaseModel
 
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,6 +12,9 @@ import mysql.connector
 import hashlib
 import time 
 import random
+
+from fastmcp import FastMCP
+from fastmcp.server.dependencies import get_http_request
 
 class messageData(BaseModel):
     id:int
@@ -73,6 +76,82 @@ mycursor.execute(
 )
 mycursor.close()
 
+
+async def sendMessage(request: Request,message: requestMessageCreate):
+    userName,userID = request.session.get("userName"), request.session.get("userID")
+    # 檢查登入狀態、message content，有問題回傳{"error":Ture}
+    if not userName or not userID:
+        return { "error": True }
+    content = message.content
+    if not message or not content:
+        return { "error": True }
+
+    # 若登入狀態與message content 都沒有問題，建立cursor，將message存到websiteDB裡的table message
+    messageCursor = None
+    try:
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("INSERT INTO message (member_id, content) VALUES (%s, %s);", (userID, content))
+        websiteDB.commit()
+        return { "ok": True }
+    except Exception:
+        websiteDB.rollback()
+        return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()
+
+async def getMessage(request: Request):
+    currentUserName, currentUserID = request.session.get("userName"), request.session.get("userID")
+    # 檢查登入狀態
+    if not currentUserName or not currentUserID:
+        return { "error": True }
+    
+    # 建立cursor，取出message
+    messageCursor = None
+    try:
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("SELECT message.*, member.name FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC")
+        messages = messageCursor.fetchall()
+        data = []
+        for msg in messages:
+            data.append({
+                "id": msg[0],
+                "name": msg[5],
+                "content": msg[2],
+                "self": currentUserID == msg[1]
+            })
+
+        return { "ok": True, "data": data }
+    except Exception:
+        return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()
+
+async def delMessage(request: Request, messageID: str):
+    currentUserID = request.session.get("userID")
+    # 檢查登入狀態
+    if not currentUserID:
+        return { "error": True }
+    
+    # 建立cursor，確認資料庫裡有messageID符合的message，刪除該message，否則回傳error
+    messageCursor = None
+    try:
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("SELECT * FROM message WHERE message.id = %s", (messageID, ))
+        messageToDel = messageCursor.fetchone()
+        if not messageToDel:
+            return { "error": True }
+        if messageToDel[1] != currentUserID:
+            return { "error": True }
+        messageCursor.execute("DELETE FROM message WHERE id = %s AND message.member_id = %s", (messageID, currentUserID))
+        websiteDB.commit()
+        return { "ok": True }
+    except Exception:
+        return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()
 
 # 連進首頁
 @app.get("/", response_class=HTMLResponse)
@@ -178,85 +257,18 @@ async def logout(request: Request):
 
 # POST /api/message
 @app.post("/api/message")
-async def sendMessage(request: Request,message: requestMessageCreate):
-    userName,userID = request.session.get("userName"), request.session.get("userID")
-    # 檢查登入狀態、message content，有問題回傳{"error":Ture}
-    if not userName or not userID:
-        return { "error": True }
-    content = message.content
-    if not message or not content:
-        return { "error": True }
-
-    # 若登入狀態與message content 都沒有問題，建立cursor，將message存到websiteDB裡的table message
-    messageCursor = None
-    try:
-        messageCursor = websiteDB.cursor()
-        messageCursor.execute("INSERT INTO message (member_id, content) VALUES (%s, %s);", (userID, content))
-        websiteDB.commit()
-        return { "ok": True }
-    except Exception:
-        websiteDB.rollback()
-        return { "error": True }
-    finally:
-        if messageCursor is not None:
-            messageCursor.close()
+async def sendMessageApi(request: Request,message: requestMessageCreate):
+    return await sendMessage(request, message)
     
 # GET /api/message
 @app.get("/api/message")
-async def getMessage(request: Request):
-    currentUserName, currentUserID = request.session.get("userName"), request.session.get("userID")
-    # 檢查登入狀態
-    if not currentUserName or not currentUserID:
-        return { "error": True }
-    
-    # 建立cursor，取出message
-    messageCursor = None
-    try:
-        messageCursor = websiteDB.cursor()
-        messageCursor.execute("SELECT message.*, member.name FROM message INNER JOIN member ON message.member_id = member.id ORDER BY message.time DESC")
-        messages = messageCursor.fetchall()
-        data = []
-        for msg in messages:
-            data.append({
-                "id": msg[0],
-                "name": msg[5],
-                "content": msg[2],
-                "self": currentUserID == msg[1]
-            })
-
-        return { "ok": True, "data": data }
-    except Exception:
-        return { "error": True }
-    finally:
-        if messageCursor is not None:
-            messageCursor.close()
+async def getMessageApi(request: Request):
+    return await getMessage(request)
     
 # DELETE /api/message
 @app.delete("/api/message/{messageID}")
-async def delMessage(request: Request, messageID: str):
-    currentUserID = request.session.get("userID")
-    # 檢查登入狀態
-    if not currentUserID:
-        return { "error": True }
-    
-    # 建立cursor，確認資料庫裡有messageID符合的message，刪除該message，否則回傳error
-    messageCursor = None
-    try:
-        messageCursor = websiteDB.cursor()
-        messageCursor.execute("SELECT * FROM message WHERE message.id = %s", (messageID, ))
-        messageToDel = messageCursor.fetchone()
-        if not messageToDel:
-            return { "error": True }
-        if messageToDel[1] != currentUserID:
-            return { "error": True }
-        messageCursor.execute("DELETE FROM message WHERE id = %s AND message.member_id = %s", (messageID, currentUserID))
-        websiteDB.commit()
-        return { "ok": True }
-    except Exception:
-        return { "error": True }
-    finally:
-        if messageCursor is not None:
-            messageCursor.close()
+async def delMessageApi(request: Request, messageID: str):
+    return await delMessage(request, messageID)
 
 # api token
 @app.put("/api/token")
@@ -288,3 +300,62 @@ async def createToken(request: Request):
     finally:
         if tokenCursor is not None:
             tokenCursor.close()
+
+
+# week7/task2
+# 先寫好fasmcp app，最後在合併mcp_app 和 app。
+mcp = FastMCP("Testing Message Website")
+
+# 驗證token的function
+async def verifyToken():
+    request = get_http_request() # 用get_http_request直接提取HTTP請求中的原始資料(包括token)
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "): # 沒有token回傳None
+        return None
+
+    token = auth.removeprefix("Bearer ").strip() # 取出token
+    if not token:
+        return None
+    
+    # 進資料庫抓該token對應的user
+    mcpTokenCursor = None
+    try:
+        mcpTokenCursor = websiteDB.cursor()
+        mcpTokenCursor.execute("SELECT * FROM member WHERE token = %s", (token, ))
+        user = mcpTokenCursor.fetchone()
+
+        # 如果user不存在，return None
+        if not user:
+            return None
+        # 驗證成功，回傳該user id
+        return user[0]
+    finally:
+        if mcpTokenCursor is not None:
+            mcpTokenCursor.close()
+
+@mcp.tool
+async def createMessage(message: str):
+    messageCursor = None
+    try:
+        # 驗證token並取得user資訊
+        user_id = await verifyToken()
+        if user_id is None or not message:
+            return { "error": True }
+
+        # 直接把message新增到資料庫內
+        messageCursor = websiteDB.cursor()
+        messageCursor.execute("INSERT INTO message (member_id, content) VALUES (%s, %s);", (user_id, message))
+        websiteDB.commit()
+        return { "ok": True }
+    except Exception:
+        websiteDB.rollback()
+        return { "error": True }
+    finally:
+        if messageCursor is not None:
+            messageCursor.close()
+
+mcp_app = mcp.http_app(path="/")
+
+combind_app = FastAPI(lifespan=mcp_app.lifespan) # 用combind_app啟動
+combind_app.mount("/mcp", mcp_app)
+combind_app.mount("/", app)
